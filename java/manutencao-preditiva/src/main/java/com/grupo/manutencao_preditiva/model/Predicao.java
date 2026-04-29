@@ -2,51 +2,35 @@ package com.grupo.manutencao_preditiva.model;
 
 public class Predicao {
 
+    private int id;
     private Maquina maquina;
     private double risco;
-    private String nivel;
+    private String status;
 
     public Predicao() {}
 
-    public Predicao(Maquina maquina) {
+    public Predicao(int id, Maquina maquina) {
+        this.id = id;
         this.maquina = maquina;
     }
 
-    public double calcularRisco(double temperatura, double vibracao,
-                                double carga, int horas) {
+    public double calcularRisco(Maquina m) {
+        risco = (m.getTemperatura() * 0.3)
+              + (m.getVibracao() * 0.3)
+              + (m.getCarga() * 0.2)
+              + (m.getHorasUso() * 0.01);
 
-        risco = (temperatura * 0.3)
-              + (vibracao * 0.3)
-              + (carga * 0.2)
-              + (horas * 0.01);
-
-        definirNivel();
+        definirStatus();
         return risco;
     }
 
-    // Sobrecarga
-    public double calcularRisco(Maquina maquina) {
-        return calcularRisco(
-                maquina.getTemperatura(),
-                maquina.getVibracao(),
-                maquina.getCargaOperacional(),
-                maquina.getHorasUso()
-        );
+    private void definirStatus() {
+        if (risco > 70) status = "ALTO";
+        else if (risco > 40) status = "MÉDIO";
+        else status = "BAIXO";
     }
 
-    private void definirNivel() {
-        if (risco >= 70) {
-            nivel = "ALTO";
-        } else if (risco >= 40) {
-            nivel = "MODERADO";
-        } else {
-            nivel = "BAIXO";
-        }
-    }
-
-    public String gerarRelatorio() {
-        return "Máquina: " + maquina.getNome() +
-               "\nRisco: " + risco +
-               "\nNível: " + nivel;
+    public String exibir() {
+        return "Risco: " + risco + " | Status: " + status;
     }
 }

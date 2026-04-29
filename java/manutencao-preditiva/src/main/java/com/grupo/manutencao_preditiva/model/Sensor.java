@@ -4,30 +4,30 @@ public class Sensor {
 
     private int id;
     private String tipo;
+    private String unidade;
     private double valor;
+    private Maquina maquina;
 
     public Sensor() {}
 
-    public Sensor(int id, String tipo) {
+    public Sensor(int id, String tipo, String unidade) {
         this.id = id;
         this.tipo = tipo;
-    }
-
-    public Sensor(int id, String tipo, double valor) {
-        this.id = id;
-        this.tipo = tipo;
-        this.valor = valor;
+        this.unidade = unidade;
     }
 
     public void registrarLeitura(double valor) {
         this.valor = valor;
     }
 
-    public String exibirLeitura() {
-        return "Sensor: " + tipo + " | Valor: " + valor;
+    public void registrarLeitura(double valor, Maquina maquina) {
+        this.valor = valor;
+        this.maquina = maquina;
     }
 
-    public double getValor() {
-        return valor;
+    public double getValor() { return valor; }
+
+    public String exibir() {
+        return tipo + ": " + valor + " " + unidade;
     }
 }

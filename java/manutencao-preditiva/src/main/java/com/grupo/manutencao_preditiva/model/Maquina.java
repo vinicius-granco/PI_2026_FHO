@@ -4,64 +4,47 @@ public class Maquina {
 
     private int id;
     private String nome;
-    private String fabricante;
+    private String modelo;
+    private String tipo;
+    private Empresa empresa;
+
     private double temperatura;
     private double vibracao;
-    private double cargaOperacional;
+    private double carga;
     private int horasUso;
 
-    // Construtor vazio
-    public Maquina() {
-    }
+    public Maquina() {}
 
-    // Construtor simples
-    public Maquina(int id, String nome, String fabricante) {
+    public Maquina(int id, String nome, String modelo) {
         this.id = id;
         this.nome = nome;
-        this.fabricante = fabricante;
+        this.modelo = modelo;
     }
 
-    // Construtor completo
-    public Maquina(int id, String nome, String fabricante,
-                   double temperatura, double vibracao,
-                   double cargaOperacional, int horasUso) {
-        this.id = id;
-        this.nome = nome;
-        this.fabricante = fabricante;
-        this.temperatura = temperatura;
-        this.vibracao = vibracao;
-        this.cargaOperacional = cargaOperacional;
-        this.horasUso = horasUso;
+    public Maquina(int id, String nome, String modelo, Empresa empresa) {
+        this(id, nome, modelo);
+        this.empresa = empresa;
     }
 
-    // Método normal
     public void atualizarLeituras(double temperatura, double vibracao) {
         this.temperatura = temperatura;
         this.vibracao = vibracao;
     }
 
-    // Sobrecarga
-    public void atualizarLeituras(double temperatura, double vibracao,
-                                  double cargaOperacional, int horasUso) {
+    public void atualizarLeituras(double temperatura, double vibracao, double carga, int horasUso) {
         this.temperatura = temperatura;
         this.vibracao = vibracao;
-        this.cargaOperacional = cargaOperacional;
+        this.carga = carga;
         this.horasUso = horasUso;
     }
 
-    public String exibirDados() {
-        return "Máquina: " + nome +
-               "\nFabricante: " + fabricante +
-               "\nTemperatura: " + temperatura +
-               "\nVibração: " + vibracao +
-               "\nCarga: " + cargaOperacional +
-               "\nHoras de Uso: " + horasUso;
+    public String resumo() {
+        return nome + " | Temp: " + temperatura + " | Vib: " + vibracao;
     }
 
-    // Getters
     public double getTemperatura() { return temperatura; }
     public double getVibracao() { return vibracao; }
-    public double getCargaOperacional() { return cargaOperacional; }
+    public double getCarga() { return carga; }
     public int getHorasUso() { return horasUso; }
     public String getNome() { return nome; }
 }
