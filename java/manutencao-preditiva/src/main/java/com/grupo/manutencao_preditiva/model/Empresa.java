@@ -1,8 +1,11 @@
 package com.grupo.manutencao_preditiva.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Empresa {
+
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private int id;
     private String nome;
@@ -28,8 +31,14 @@ public class Empresa {
     }
 
     public String exibirEmpresa() {
-        return nome + " | CNPJ: " + cnpj + " | Setor: " + setorIndustrial;
+        return String.format("  Nome   : %s%n  CNPJ   : %s%n  Setor  : %s%n  Desde  : %s",
+            nome,
+            cnpj,
+            setorIndustrial != null ? setorIndustrial : "Nao informado",
+            dataCriacao != null ? dataCriacao.format(FMT) : "N/A");
     }
 
     public String getNome() { return nome; }
+    public String getCnpj() { return cnpj; }
+    public int    getId()   { return id; }
 }

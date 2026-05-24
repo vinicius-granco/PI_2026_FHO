@@ -24,6 +24,15 @@ public class Usuario {
     }
 
     public String exibirUsuario() {
-        return nomeCompleto + " | Email: " + email;
+        return String.format("  Nome    : %s%n  Email   : %s%n  Cargo   : %s%n  Empresa : %s",
+            nomeCompleto, email,
+            cargo   != null ? cargo   : "Nao informado",
+            empresa != null ? empresa.getNome() : "Nao vinculado");
     }
+
+    public String getNomeCompleto() { return nomeCompleto; }
+    public String getEmail()        { return email; }
+    public String getCargo()        { return cargo; }
+    public void   setCargo(String cargo) { this.cargo = cargo; }
+    public int    getId()           { return id; }
 }
