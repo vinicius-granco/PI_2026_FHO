@@ -56,11 +56,28 @@ public class Alerta {
     }
 
     public void gerarAlerta(Maquina maquina, double risco) {
+        this.id = contadorId++;
         this.maquina = maquina;
-        if      (risco >= 70) nivel = "CRITICO";
-        else if (risco >= 40) nivel = "MODERADO";
-        else if (risco >= 20) nivel = "ATENCAO";
-        else                  nivel = "NORMAL";
+        this.data = LocalDateTime.now();
+        if (risco >= 70) {
+            nivel = "CRITICO";  tipo = "Falha Iminente";
+            mensagem = "Risco critico detectado. Parada preventiva recomendada.";
+        } else if (risco >= 40) {
+            nivel = "MODERADO"; tipo = "Atencao Necessaria";
+            mensagem = "Parametros fora do intervalo ideal. Monitorar com atencao.";
+        } else if (risco >= 20) {
+            nivel = "ATENCAO";  tipo = "Monitoramento";
+            mensagem = "Leituras ligeiramente elevadas. Manter observacao.";
+        } else {
+            nivel = "NORMAL";   tipo = "Status OK";
+            mensagem = "Maquina operando dentro dos parametros normais.";
+        }
+        historico.add(this);
+    }
+
+    public static void resetar() {
+        historico.clear();
+        contadorId = 1;
     }
 
     public String exibir() {

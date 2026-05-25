@@ -55,7 +55,7 @@ public class Sensor {
     public String getTipo()          { return tipo; }
     public String getUnidade()       { return unidade; }
     public int    getId()            { return id; }
-    public double getValorMaximo()   { return valorMaximo; }
-    public double getValorMinimo()   { return valorMinimo; }
+    public double getValorMaximo()   { return historico.isEmpty() ? 0.0 : valorMaximo; }
+    public double getValorMinimo()   { return historico.isEmpty() ? 0.0 : valorMinimo; }
     public int    getTotalLeituras() { return historico.size(); }
 }

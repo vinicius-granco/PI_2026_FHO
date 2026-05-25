@@ -74,6 +74,8 @@ public class Predicao {
     }
 
     public String gerarRelatorio() {
+        if (status == null)
+            throw new IllegalStateException("calcularRisco() deve ser chamado antes de gerarRelatorio()");
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("  Maquina      : %s%n", maquina.getNome()));
         sb.append(String.format("  Status       : %s%n", status));

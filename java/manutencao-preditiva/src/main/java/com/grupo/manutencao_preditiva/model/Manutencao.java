@@ -27,6 +27,10 @@ public class Manutencao {
     }
 
     public void finalizar(double custo, String descricao) {
+        if (!"EM_ANDAMENTO".equals(status))
+            throw new IllegalStateException("Transicao invalida: status atual=" + status);
+        if (custo < 0)
+            throw new IllegalArgumentException("Custo nao pode ser negativo: " + custo);
         this.dataFim = LocalDate.now();
         this.custo = custo;
         this.descricao = descricao;
@@ -34,6 +38,8 @@ public class Manutencao {
     }
 
     public void cancelar() {
+        if (!"EM_ANDAMENTO".equals(status))
+            throw new IllegalStateException("Transicao invalida: status atual=" + status);
         this.dataFim = LocalDate.now();
         this.status = "CANCELADA";
     }

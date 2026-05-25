@@ -8,6 +8,7 @@ import java.util.Scanner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import com.grupo.manutencao_preditiva.model.Alerta;
 import com.grupo.manutencao_preditiva.model.Empresa;
@@ -21,8 +22,20 @@ import com.grupo.manutencao_preditiva.model.Usuario;
 @SpringBootApplication
 public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
+    // --- Scanner injetado via construtor (BUG-11/12 corrigido) ---------------
+
+    @Bean
+    public static Scanner scanner() {
+        return new Scanner(System.in);
+    }
+
+    private final Scanner sc;
+
+    public ManutencaoPreditivaApplication(Scanner sc) {
+        this.sc = sc;
+    }
+
     // --- Estado global da sessao ------------------------------------------
-    private static final Scanner sc = new Scanner(System.in);
 
     private final List<Maquina>      maquinas    = new ArrayList<>();
     private final List<Manutencao>   manutencoes = new ArrayList<>();
@@ -71,20 +84,15 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
     private void cadastrarSessao() {
         secao("IDENTIFICACAO DA EMPRESA");
-        System.out.print("  Nome da empresa  : ");
-        String nomeEmpresa = sc.nextLine().trim();
-        System.out.print("  CNPJ             : ");
-        String cnpj = sc.nextLine().trim();
-        System.out.print("  Setor industrial : ");
-        String setor = sc.nextLine().trim();
+        String nomeEmpresa = lerStringObrigatoria("Nome da empresa  ");
+        String cnpj        = lerCNPJ();
+        String setor       = lerStringObrigatoria("Setor industrial ");
         empresa = new Empresa(1, nomeEmpresa, cnpj, setor, java.time.LocalDate.now());
 
         System.out.println();
         secao("IDENTIFICACAO DO OPERADOR");
-        System.out.print("  Seu nome         : ");
-        String nomeUser = sc.nextLine().trim();
-        System.out.print("  E-mail           : ");
-        String email = sc.nextLine().trim();
+        String nomeUser = lerStringObrigatoria("Seu nome         ");
+        String email    = lerEmail();
         usuario = new Usuario(1, nomeUser, email, empresa);
 
         log("Sessao", "Login de " + nomeUser);
@@ -159,12 +167,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
     private void cadastrarMaquina() {
         cabecalho("CADASTRAR MAQUINA");
-        System.out.print("  Nome da maquina  : ");
-        String nome = sc.nextLine().trim();
-        System.out.print("  Fabricante       : ");
-        String fabricante = sc.nextLine().trim();
-        System.out.print("  Tipo/modelo      : ");
-        String tipo = sc.nextLine().trim();
+        String nome       = lerStringObrigatoria("Nome da maquina  ");
+        String fabricante = lerStringObrigatoria("Fabricante       ");
+        String tipo       = lerStringObrigatoria("Tipo/modelo      ");
 
         Maquina m = new Maquina(contadorMaquina++, nome, fabricante, empresa);
         m.setTipo(tipo);
@@ -529,10 +534,13 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         double custo = lerDouble();
         System.out.print("  Descricao do servico: ");
         String desc = sc.nextLine().trim();
-        abertas.get(idx).finalizar(custo, desc);
-
-        log("Manutencao", "Finalizada: #" + abertas.get(idx).getId());
-        sucesso("Manutencao finalizada com sucesso!");
+        try {
+            abertas.get(idx).finalizar(custo, desc);
+            log("Manutencao", "Finalizada: #" + abertas.get(idx).getId());
+            sucesso("Manutencao finalizada com sucesso!");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            aviso(e.getMessage());
+        }
         pausar(null);
     }
 
@@ -798,6 +806,33 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
                 sc.nextLine();
                 System.out.print("  Valor invalido. Use ponto ou virgula (ex: 72.5): ");
             }
+        }
+    }
+
+    private String lerStringObrigatoria(String label) {
+        while (true) {
+            System.out.print("  " + label + ": ");
+            String v = sc.nextLine().trim();
+            if (!v.isEmpty()) return v;
+            aviso("Campo obrigatorio. Digite um valor valido.");
+        }
+    }
+
+    private String lerEmail() {
+        while (true) {
+            System.out.print("  E-mail           : ");
+            String v = sc.nextLine().trim();
+            if (!v.isEmpty() && v.contains("@")) return v;
+            aviso("E-mail invalido. O endereco deve conter '@'.");
+        }
+    }
+
+    private String lerCNPJ() {
+        while (true) {
+            System.out.print("  CNPJ             : ");
+            String v = sc.nextLine().trim();
+            if (!v.isEmpty() && v.matches("[0-9.\\-/]+")) return v;
+            aviso("CNPJ invalido. Use apenas numeros e os caracteres '.' '-' '/'.");
         }
     }
 }
