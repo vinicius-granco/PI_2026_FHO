@@ -49,6 +49,15 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
     private int contadorManutencao = 1;
     private int contadorLog        = 1;
 
+    // --- Cores ANSI (Windows Terminal, PowerShell 7, terminais modernos) -----
+    private static final String RESET    = "\033[0m";
+    private static final String NEGRITO  = "\033[1m";
+    private static final String VERMELHO = "\033[31m";
+    private static final String VERDE    = "\033[32m";
+    private static final String AMARELO  = "\033[33m";
+    private static final String AZUL     = "\033[34m";
+    private static final String CIANO    = "\033[36m";
+
     // --- Entry point -------------------------------------------------------
 
     public static void main(String[] args) {
@@ -63,9 +72,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         telaBoasVindas();
         cadastrarSessao();
         menuPrincipal();
-        linha('=', 52);
-        System.out.println("  Sessao encerrada. Ate logo!");
-        linha('=', 52);
+        System.out.println(AZUL + NEGRITO + "  " + "=".repeat(52) + RESET);
+        System.out.println(CIANO + NEGRITO + "  Sessao encerrada. Ate logo!" + RESET);
+        System.out.println(AZUL + NEGRITO + "  " + "=".repeat(52) + RESET);
         sc.close();
     }
 
@@ -75,10 +84,31 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
     private void telaBoasVindas() {
         limpar();
-        linha('=', 52);
-        System.out.println("  |" + centralizar("PREDIX", 48) + "|");
-        System.out.println("  |" + centralizar("Sistema de Manutencao Preditiva", 48) + "|");
-        linha('=', 52);
+        // Moldura: "  +" + "="*60 + "+" => border total 64 chars
+        //          "  ||" + content(58) + "||" => body total 64 chars
+        String brd = AZUL + NEGRITO + "  +" + "=".repeat(60) + "+" + RESET;
+        String vz  = AZUL + NEGRITO + "  ||" + " ".repeat(58) + "||" + RESET;
+        System.out.println(brd);
+        System.out.println(vz);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET
+            + NEGRITO + centralizar("[ P R E D I X ]", 58) + RESET
+            + AZUL + NEGRITO + "||" + RESET);
+        System.out.println(vz);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET
+            + centralizar("Sistema de Manutencao Preditiva Industrial", 58)
+            + AZUL + NEGRITO + "||" + RESET);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET
+            + centralizar("Monitoramento Inteligente  |  Analise de Risco", 58)
+            + AZUL + NEGRITO + "||" + RESET);
+        System.out.println(vz);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET
+            + VERDE + String.format("  %-28s%-28s", ">> Gestao de Maquinas", ">> Analise de Sensores") + RESET
+            + AZUL + NEGRITO + "||" + RESET);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET
+            + VERDE + String.format("  %-28s%-28s", ">> Predicao de Falhas", ">> Alertas Automaticos") + RESET
+            + AZUL + NEGRITO + "||" + RESET);
+        System.out.println(vz);
+        System.out.println(brd);
         System.out.println();
     }
 
@@ -192,11 +222,11 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
             pausar(null);
             return;
         }
-        System.out.printf("  %-4s  %-22s  %-16s  %-8s  %s%n",
+        System.out.printf(CIANO + NEGRITO + "  %-4s  %-22s  %-16s  %-8s  %s" + RESET + "%n",
             "#", "Nome", "Fabricante", "Leituras", "Ativa?");
-        divisor();
+        System.out.println(CIANO + "  " + "-".repeat(64) + RESET);
         for (Maquina m : maquinas) {
-            String ativa = (m == maquinaAtiva) ? "<< ATIVA" : "";
+            String ativa = (m == maquinaAtiva) ? VERDE + NEGRITO + "<< ATIVA" + RESET : "";
             System.out.printf("  %-4d  %-22s  %-16s  %-8d  %s%n",
                 m.getId(), m.getNome(), m.getFabricante(),
                 m.getTotalLeituras(), ativa);
@@ -213,7 +243,7 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         }
         for (int i = 0; i < maquinas.size(); i++) {
             Maquina m = maquinas.get(i);
-            String marca = (m == maquinaAtiva) ? " << ATIVA" : "";
+            String marca = (m == maquinaAtiva) ? " " + VERDE + NEGRITO + "<< ATIVA" + RESET : "";
             System.out.printf("  [ %d ]  %s | %s%s%n", i + 1, m.getNome(), m.getFabricante(), marca);
         }
         System.out.println();
@@ -319,10 +349,10 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         int horas       = lerInt();
 
         System.out.println();
-        divisor();
-        System.out.printf("  %-6s  %-12s  %-14s  %-12s%n",
+        System.out.println(CIANO + "  " + "-".repeat(50) + RESET);
+        System.out.printf(CIANO + NEGRITO + "  %-6s  %-12s  %-14s  %-12s" + RESET + "%n",
             "Ciclo", "Temp (C)", "Vib (mm/s)", "Risco");
-        divisor();
+        System.out.println(CIANO + "  " + "-".repeat(50) + RESET);
 
         List<Sensor> sensores = maquinaAtiva.getSensores();
         double tempAtual = tempBase;
@@ -349,7 +379,7 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
             System.out.printf("  %-6d  %-12.1f  %-14.2f  %s %.1f%%%n",
                 i, tempAtual, vibAtual, status, p.getRisco());
         }
-        divisor();
+        System.out.println(CIANO + "  " + "-".repeat(50) + RESET);
         log("Simulacao", ciclos + " ciclos em " + maquinaAtiva.getNome());
         pausar(null);
     }
@@ -365,9 +395,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         if (sensores.isEmpty()) {
             aviso("Nenhum sensor encontrado.");
         } else {
-            System.out.printf("  %-16s  %-6s  %-8s  %-8s  %-8s  %-8s%n",
+            System.out.printf(CIANO + NEGRITO + "  %-16s  %-6s  %-8s  %-8s  %-8s  %-8s" + RESET + "%n",
                 "Sensor", "Leit.", "Atual", "Media", "Maximo", "Minimo");
-            divisor();
+            System.out.println(CIANO + "  " + "-".repeat(64) + RESET);
             for (Sensor s : sensores) {
                 if (s.getTotalLeituras() > 0) {
                     System.out.printf("  %-16s  %-6d  %-8.2f  %-8.2f  %-8.2f  %-8.2f%n",
@@ -421,7 +451,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         Predicao predicao = new Predicao(maquinaAtiva);
         predicao.calcularRisco(maquinaAtiva);
 
-        System.out.println(predicao.gerarRelatorio());
+        double pct = predicao.getRisco();
+        String corRel = pct >= 70 ? VERMELHO : pct >= 20 ? AMARELO : VERDE;
+        System.out.println(corRel + predicao.gerarRelatorio() + RESET);
         System.out.println();
 
         Alerta alerta = Alerta.gerar(maquinaAtiva, predicao.getRisco());
@@ -439,9 +471,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
             return;
         }
 
-        System.out.printf("  %-22s  %-10s  %-10s  %s%n",
+        System.out.printf(CIANO + NEGRITO + "  %-22s  %-10s  %-10s  %s" + RESET + "%n",
             "Maquina", "Risco", "Status", "Leituras");
-        divisor();
+        System.out.println(CIANO + "  " + "-".repeat(56) + RESET);
 
         for (Maquina m : maquinas) {
             if (m.getTotalLeituras() == 0) {
@@ -450,13 +482,15 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
             }
             Predicao p = new Predicao(m);
             p.calcularRisco(m);
-            String icone;
-            if      (p.getRisco() >= 70) icone = "[CRITICO]";
-            else if (p.getRisco() >= 40) icone = "[ATENCAO]";
-            else if (p.getRisco() >= 20) icone = "[MONITOR]";
-            else                         icone = "[ NORMAL]";
-            System.out.printf("  %-22s  %s %5.1f%%  %-10s  %d leit.%n",
-                m.getNome(), icone, p.getRisco(), p.getStatus(), m.getTotalLeituras());
+            String icone; String cor;
+            if      (p.getRisco() >= 70) { icone = "[CRITICO]"; cor = VERMELHO + NEGRITO; }
+            else if (p.getRisco() >= 40) { icone = "[ATENCAO]"; cor = AMARELO  + NEGRITO; }
+            else if (p.getRisco() >= 20) { icone = "[MONITOR]"; cor = AMARELO;             }
+            else                         { icone = "[ NORMAL]"; cor = VERDE;               }
+            System.out.printf("  %-22s  ", m.getNome());
+            System.out.print(cor + icone + RESET);
+            System.out.printf(" %5.1f%%  %-10s  %d leit.%n",
+                p.getRisco(), p.getStatus(), m.getTotalLeituras());
         }
         pausar(null);
     }
@@ -690,20 +724,24 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
     private void cabecalho(String titulo) {
         limpar();
-        linha('=', 52);
-        System.out.println("  || PREDIX >> " + titulo);
-        linha('=', 52);
+        System.out.println(AZUL + NEGRITO + "  " + "=".repeat(52) + RESET);
+        System.out.println(AZUL + NEGRITO + "  ||" + RESET + NEGRITO + " PREDIX >> " + titulo + RESET);
+        System.out.println(AZUL + NEGRITO + "  " + "=".repeat(52) + RESET);
         System.out.println();
     }
 
     private void secao(String titulo) {
+        // largura fixa 52: esq + " " + titulo + " " + dir = 52  =>  esq + dir = 50 - titulo.length()
+        int disponivel = Math.max(0, 50 - titulo.length());
+        int esq = disponivel / 2;
+        int dir = disponivel - esq;
         System.out.println();
-        System.out.println("  -- " + titulo + " " + "-".repeat(Math.max(0, 44 - titulo.length())));
+        System.out.println(CIANO + "  " + "-".repeat(esq) + " " + titulo + " " + "-".repeat(dir) + RESET);
     }
 
     private void statusSessao() {
         if (empresa != null)
-            System.out.printf("  Empresa : %s  |  Operador: %s%n",
+            System.out.printf(CIANO + "  Empresa : " + RESET + "%s" + CIANO + "  |  Operador: " + RESET + "%s%n",
                 empresa.getNome(),
                 usuario != null ? usuario.getNomeCompleto() : "-");
         indicadorAtiva();
@@ -711,27 +749,33 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
     private void indicadorAtiva() {
         if (maquinaAtiva != null)
-            System.out.printf("  Ativa   : %s (%d leituras)%n",
+            System.out.printf(CIANO + "  Ativa   : " + RESET + "%s (%d leituras)%n",
                 maquinaAtiva.getNome(), maquinaAtiva.getTotalLeituras());
         else
-            System.out.println("  Ativa   : (nenhuma selecionada)");
+            System.out.println(CIANO + "  Ativa   : " + RESET + "(nenhuma selecionada)");
     }
 
     private void exibirBannerAlerta(double risco, Alerta alerta) {
         if (risco >= 70) {
+            System.out.print(VERMELHO + NEGRITO);
             linha('!', 52);
             System.out.println("  [CRITICO] " + alerta.getMensagem());
             linha('!', 52);
+            System.out.print(RESET);
         } else if (risco >= 40) {
+            System.out.print(AMARELO + NEGRITO);
             linha('-', 52);
             System.out.println("  [ATENCAO] " + alerta.getMensagem());
             linha('-', 52);
+            System.out.print(RESET);
         } else if (risco >= 20) {
+            System.out.print(AMARELO);
             linha('-', 52);
             System.out.println("  [MONITOR] " + alerta.getMensagem());
             linha('-', 52);
+            System.out.print(RESET);
         } else {
-            System.out.println("  [ OK ] " + alerta.getMensagem());
+            System.out.println(VERDE + "  [ OK ] " + alerta.getMensagem() + RESET);
         }
     }
 
@@ -745,9 +789,9 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         return true;
     }
 
-    private void sucesso(String msg) { System.out.println("\n  [OK] " + msg); }
-    private void aviso(String msg)   { System.out.println("\n  [!!] " + msg); }
-    private void info(String msg)    { System.out.println("   [i] " + msg); }
+    private void sucesso(String msg) { System.out.println("\n" + VERDE   + NEGRITO + "  [OK] " + RESET + VERDE   + msg + RESET); }
+    private void aviso(String msg)   { System.out.println("\n" + VERMELHO + NEGRITO + "  [!!] " + RESET + VERMELHO + msg + RESET); }
+    private void info(String msg)    { System.out.println(CIANO + "   [i] " + RESET + msg); }
 
     private void linha(char c, int n) {
         System.out.println("  " + String.valueOf(c).repeat(n));
@@ -763,7 +807,8 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
     }
 
     private void limpar() {
-        System.out.print("\033[H\033[2J");
+        // \033[H  = cursor para home; \033[2J = limpa tela; \033[3J = limpa scrollback
+        System.out.print("\033[H\033[2J\033[3J");
         System.out.flush();
     }
 
@@ -779,7 +824,7 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
     // -- Leitura segura de inputs -------------------------------------------
 
     private int lerOpcao() {
-        System.out.print("\n  >> Opcao: ");
+        System.out.print("\n" + NEGRITO + "  >> Opcao: " + RESET);
         return lerInt();
     }
 
