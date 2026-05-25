@@ -22,7 +22,6 @@ import com.grupo.manutencao_preditiva.model.Usuario;
 @SpringBootApplication
 public class ManutencaoPreditivaApplication implements CommandLineRunner {
 
-    // --- Scanner injetado via construtor (BUG-11/12 corrigido) ---------------
 
     @Bean
     public static Scanner scanner() {
