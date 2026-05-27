@@ -256,7 +256,7 @@ Pontos    |   10   |    7   |    4   |    2   |    0
 ```
 0  a 19 pts  ->  NORMAL    (operacao segura)
 20 a 39 pts  ->  ATENCAO   (monitorar com frequencia maior)
-40 a 69 pts  ->  MODERADO  (agendar manutencao preventiva)
+40 a 69 pts  ->  MODERADO  (agendar manutencao)
 70 a 100 pts ->  CRITICO   (parada imediata recomendada)
 ```
 

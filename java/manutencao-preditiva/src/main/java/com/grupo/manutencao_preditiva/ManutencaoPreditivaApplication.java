@@ -871,12 +871,18 @@ public class ManutencaoPreditivaApplication implements CommandLineRunner {
         }
     }
 
+    private String formatarCNPJ(String cnpj) {
+        return cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "."
+             + cnpj.substring(5, 8) + "/" + cnpj.substring(8, 12) + "-"
+             + cnpj.substring(12, 14);
+    }
+
     private String lerCNPJ() {
         while (true) {
             System.out.print("  CNPJ             : ");
-            String v = sc.nextLine().trim();
-            if (!v.isEmpty() && v.matches("[0-9.\\-/]+")) return v;
-            aviso("CNPJ invalido. Use apenas numeros e os caracteres '.' '-' '/'.");
+            String v = sc.nextLine().trim().replaceAll("[^0-9]", "");
+            if (v.length() == 14) return formatarCNPJ(v);
+            aviso("CNPJ invalido. O CNPJ deve ter exatamente 14 digitos numericos.");
         }
     }
 }

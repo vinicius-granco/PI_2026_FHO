@@ -10,7 +10,10 @@
 
 **O que falar:** *(Destaque o código no print)*
 
-"Aqui dividimos o sistema em dois grandes blocos. À esquerda, os Models, onde aplicamos o Encapsulamento: todos os atributos são privados, protegendo a regra de negócio. Também usamos membros estáticos para gerenciar IDs de forma global, simulando um banco de dados em memória. À direita, a MainApplication orquestra tudo através do Spring. O código é limpo e modular, facilitando futuras expansões, como a adição de novos tipos de sensores ou máquinas."
+"Professor, neste slide detalhamos a engenharia por trás do PREDIX. À esquerda, no código dos Models, aplicamos o Encapsulamento com atributos private, garantindo que os dados da máquina só sejam acessados e alterados de forma segura.
+Notem também o uso da Sobrecarga de Construtores. Criamos múltiplas formas de inicializar um objeto: podemos criar uma máquina apenas com dados básicos ou já vinculá-la a uma empresa no momento do cadastro. Isso dá versatilidade ao código e facilita a manutenção.
+Para a gestão dos dados, implementamos uma Camada de Persistência em Memória utilizando ArrayLists. Elas simulam nosso banco de dados, armazenando dinamicamente o histórico de sensores e leituras de cada máquina. Além disso, utilizamos membros estáticos para controlar a geração de IDs únicos de forma global.
+À direita, a MainApplication utiliza o Spring Boot para orquestrar esses objetos. Essa estrutura modular prova que o sistema é escalável: a lógica de negócio está protegida nos modelos, enquanto a aplicação gerencia o fluxo e a interface com o usuário."
 
 ---
 
@@ -18,7 +21,11 @@
 
 **O que falar:** *(Esse é o "cérebro" do projeto, fale com confiança)*
 
-"O diferencial do PREDIX é que ele não usa uma média simples. Criamos um Algoritmo de Pesos Ponderados. A Temperatura (40%) e a Vibração (35%) são os fatores que mais pesam no risco, pois são os principais sinais de quebra iminente. Como podem ver no trecho de código, a lógica é não-linear: usamos 'thresholds' (faixas). Se a temperatura ultrapassa 90 graus, o risco dá um salto para 40 pontos imediatamente. Isso evita que falhas críticas sejam camufladas por outros dados normais."
+"Professor, este slide apresenta o 'cérebro' do PREDIX e onde aplicamos a real inteligência do sistema.
+1. Superando a Média Simples: O grande diferencial aqui é que não utilizamos uma média aritmética simples. Em uma média comum, um sensor em estado perfeito poderia 'mascarar' ou esconder um sensor que está prestes a explodir. No PREDIX, criamos um Algoritmo de Pesos Ponderados.
+2. Priorização Técnica (Pesos): Atribuímos pesos diferentes baseados na realidade física industrial: a Temperatura (40%) e a Vibração (35%) são os fatores soberanos, pois indicam falhas iminentes. Carga e Horas de Uso complementam o diagnóstico com pesos menores.
+3. Lógica Não-Linear (Thresholds): Como podem ver no trecho de código à direita, a lógica é não-linear. Trabalhamos com 'thresholds', ou faixas de tolerância. Isso simula o comportamento real dos materiais: o risco não sobe devagar e constante, ele dá 'saltos' nos pontos de ruptura.
+4. O Pulo do Gato: Se a temperatura ultrapassa os 90 graus, o sistema injeta 40 pontos de risco instantaneamente. Isso garante que a sensibilidade do software seja altíssima para o que realmente importa, impedindo que uma falha crítica seja camuflada por outros dados que ainda estejam normais. É um sistema programado para pensar como um especialista em manutenção."
 
 ---
 
@@ -26,7 +33,20 @@
 
 **O que falar:**
 
-"Para provar que a predição funciona, criamos um simulador de desgaste industrial. Cada ciclo representa 168 horas (uma semana) de operação contínua. Para tornar a simulação realista e não apenas uma subida matemática perfeita, injetamos 'ruído branco' usando Math.random(). Isso faz com que os valores oscilem levemente, como em um sensor real, permitindo observar a tendência de falha ao longo de meses em apenas alguns segundos de execução."
+"Para provar que a predição funciona, criamos um simulador de desgaste industrial. 
+
+1. A Escala de Tempo (Destaque 168h): Notem no canto superior que cada 'passo' da simulação representa 168 horas. Isso não é um número aleatório: equivale a uma semana inteira de operação contínua em regime industrial (24/7). Em segundos, conseguimos projetar o que aconteceria com o equipamento ao longo de meses.
+2. A Lógica do Código (Bloco de Incrementos): Se olharmos para o trecho de código, vemos como o desgaste é calculado. Não é uma subida linear simples. Utilizamos um incremento fixo (de 3.0 para temperatura e 0.8 para vibração) somado a uma função estocástica usando Math.random().
+3. O Ruído Branco (Matemática): Como detalhado no slide, essa fórmula gera um 'ruído branco' no intervalo de -1 a +1. Isso é fundamental para simular a realidade: sensores reais sofrem interferências de carga, temperatura ambiente e até lubrificação, fazendo os valores oscilarem.
+
+Nós controlamos a amplitude do ruído através da matemática, professor. No caso da temperatura, usamos a fórmula Math.random() * 2 - 1 para garantir que a oscilação aleatória seja sempre pequena, variando no máximo 1 grau para cima ou para baixo em relação ao incremento fixo de 3 graus. Isso mantém a tendência de subida constante, mas com a 'sujeira' natural de um sensor real.
+
+O método Math.random() sempre gera um número entre 0.0 e 0.999
+
+É por isso que o resultado final sempre flutua entre -1 e +1 na temp e -0.2 e + 0.2 na vib
+
+
+4. O Resultado no Gráfico: O gráfico à esquerda traduz exatamente essa execução. As linhas roxa (Temperatura) e azul (Vibração) mostram essa tendência de subida 'tremida' e realista. Vejam que, ao atingir a nona semana (W9), o sistema já cruza a linha pontilhada e dispara o status CRÍTICO, permitindo que a manutenção seja planejada com antecedência, antes da quebra total"
 
 ---
 
